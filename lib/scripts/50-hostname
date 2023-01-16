@@ -1,0 +1,10 @@
+#!/bin/sh
+# vim: set ts=4 sw=4:
+set -eu
+
+[ "${SET_HOSTNAME:=${FQDN:-}}" ] || exit 0
+
+printf '%s\n' "${SET_HOSTNAME%%.*}" \
+	| sed 's/[^-a-zA-Z0-9]/-/g; s/^-*//g; s/-*$//g' \
+	> /etc/hostname
+hostname "$(cat /etc/hostname)"

@@ -1,0 +1,118 @@
+= virt-init
+:proj-name: virt-init
+:gh-name: jirutka/{proj-name}
+:scripts-dir: lib/scripts
+
+This project provides “provisioning” scripts for https://alpinelinux.org[Alpine Linux] virtual machines running on VMware (other platforms will be supported later).
+
+WIP
+
+
+== Supported platforms
+
+=== VMware/OVF
+
+OVF properties are mapped to the variables for the provisioning scripts by converting to SCREAMING_CASE and replacing all non-alphanumeric characters with an underscore (`\_`).
+For example, OVF property `admin-user` is mapped to variable `ADMIN_USER`.
+This mapping can be customized in the link:etc/conf.d/virt-init[config] via `vmware_ovf_mapping`.
+There’s one predefined mapping: `hostname` to `SET_HOSTNAME`.
+Some special variable names, such as `PATH`, `PWD` or `RC_*` variables, are protected.
+
+
+== Scripts
+
+=== link:{scripts-dir}/50-admin-user[50-admin-user]
+
+Creates an user account named `**$ADMIN_USER**` with primary group `users`, secondary group `**$ADMIN_GROUP**` (defaults to `wheel`), and shell `**$ADMIN_SHELL**` (defaults to `/bin/sh`).
+
+If `**$ADMIN_USER**` is not provided, this script is skipped.
+
+
+=== link:{scripts-dir}/50-grow-fs[50-grow-fs]
+
+Extends all mounted filesystems to the maximum disk capacity.
+Only ext3, ext4, and btrfs are currently supported.
+
+*Note*: This script does not increase size of underlying partitions, because it’s just silly to use partitions on non-physical disks.
+
+
+=== link:{scripts-dir}/50-hostname[50-hostname]
+
+Sets the hostname to `**$SET_HOSTNAME**`, if provided.
+It should contain only alphanumeric ASCII characters and a hyphen (`[a-zA-Z0-9-]`), all other characters will be replaced with a hyphen (`-`).
+
+
+=== link:{scripts-dir}/50-timezone[50-timezone]
+
+Changes the system timezone to `**$TIMEZONE**` (e.g. `Europe/Prague`, `UTC`), if provided.
+
+
+=== link:{scripts-dir}/60-hosts[60-hosts]
+
+Adds the following lines to `/etc/hosts`:
+
+[source, subs="+quotes"]
+127.0.0.1  _<fqdn>_ _<hostname>_ localhost
+::1        _<fqdn>_ _<hostname>_ localhost
+
+`__<fqdn>__` is `**$FQDN**` or, if not provided, `**$SET_HOSTNAME**`.
+It should contain only alphanumeric characters, a hyphen and a period (`[a-zA-Z0-9.-]`), all other characters will be replaced with a hyphen (`-`).
+
+`__<hostname>__` is the system’s hostname (previously set to `**$SET_HOSTNAME**`).
+
+
+=== link:{scripts-dir}/60-ssh-keys[60-ssh-keys]
+
+If `**$ROOT_SSH_KEYS**` with SSH public key(s) is provided, adds them to `/root/.ssh/authorized_keys`.
+If `**$ADMIN_SSH_KEYS**` is provided, adds them to `authorized_keys` of the user specified in `**$ADMIN_USER**` (defaults to `root`).
+
+
+== Requirements
+
+* POSIX-compatible shell (e.g. ash, bash, dash, zsh)
+* https://wiki.gentoo.org/wiki/OpenRC[OpenRC]
+* `btrfs` utility and/or `resize2fs` from http://e2fsprogs.sourceforge.net[e2fsprogs] (only for grow-fs script)
+* `vmware-rpctool` from open-vm-tools (only for VMware)
+
+
+== Installation
+
+// === Alpine Linux
+// 
+// . Install https://pkgs.alpinelinux.org/packages?name={proj-name}[{proj-name}] from the Alpine’s main repository:
+// +
+// [source, sh, subs="+attributes"]
+// apk add {proj-name}
+
+
+=== Manually
+
+. Clone this repository and jump in:
++
+[source, sh, subs="+attributes"]
+git clone https://github.com/{gh-name}.git
+cd {proj-name}
+
+. Install files (you may need to run this with sudo):
++
+[source, sh]
+make install
++
+You may use the `DESTDIR` variable to specify the target prefix.
+
+. Add the virt-init service to the boot runlevel:
++
+[source, sh]
+rc-update add virt-init boot
+
+
+== License
+
+This project is licensed under http://opensource.org/licenses/MIT/[MIT License].
+
+
+== Resources
+
+* https://williamlam.com/2019/02/building-your-own-virtual-appliances-using-ovf-properties-part-1.html[Building your own Virtual Appliances using OVF properties]
+* https://williamlam.com/2011/01/how-to-extract-host-information-from.html[How to extract host information from within a VM?]
+* https://sflanders.net/2014/06/26/power-ovf-properties/[The Power of OVF Properties]

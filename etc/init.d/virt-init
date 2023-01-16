@@ -1,0 +1,60 @@
+#!/sbin/openrc-run
+
+name="$RC_SVCNAME"
+description="Configure system after deploying on a virtualization platform"
+
+: ${skip_scripts:=}
+: ${platforms_dir:="/usr/share/virt-init/platforms"}
+: ${script_dirs:="/etc/virt-init.d /usr/share/virt-init/scripts"}
+
+depend() {
+	need localmount
+	before netmount
+}
+
+start() {
+	ebegin "Starting $name"
+
+	if ! [ -e "$platforms_dir/$platform.sh" ]; then
+		eerror "Unsupported platform: $platform"
+		return 1
+	fi
+
+	. "$platforms_dir/$platform.sh"
+
+	eval "$(read_params)" || return 1
+
+	local scripts=$(find $script_dirs \
+		! -type d -executable -mindepth 1 -maxdepth 1 -exec basename {} \; 2>/dev/null \
+		| sort | uniq || :)
+	if ! [ "$scripts" ]; then
+		eend 1 'No provisioning scripts found!'
+		return 1
+	fi
+
+	local rc=0 script dir
+	for script in $scripts; do
+		for dir in $script_dirs; do
+			[ -x "$dir/$script" ] || continue
+			_list_has "${script#[0-9]*-}" ${SKIP_SCRIPTS:-} $skip_scripts && break
+
+			veinfo "Executing script $dir/$script"
+			"$dir/$script" || {
+				ewarn "Provisioning script $script failed"
+				rc=1
+			}
+			break
+		done
+	done
+
+	eend $rc
+}
+
+_list_has() {
+	local needle="$1"; shift
+
+	local i; for i in "$@"; do
+	        [ "$i" != "$needle" ] || return 0
+	done
+	return 1
+}

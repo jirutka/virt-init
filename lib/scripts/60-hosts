@@ -1,0 +1,19 @@
+#!/bin/sh
+# vim: set ts=4 sw=4:
+set -eu
+
+. "$(dirname "$(readlink -f "$0")")"/../utils.sh
+
+hostname="$(hostname -s)"
+
+fqdn="$(printf '%s\n' "${FQDN:-${SET_HOSTNAME:-}}" \
+       | sed 's/[^-a-zA-Z0-9\.]/-/g; s/^[.-]*//g; s/[.-]*$//g')"
+case "$fqdn" in
+	*.*) ;;
+	*) fqdn="$hostname.local";;
+esac
+
+update_config '/etc/hosts' <<-EOF
+	127.0.0.1	${fqdn} ${hostname} localhost
+	::1		${fqdn} ${hostname} localhost
+EOF

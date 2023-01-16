@@ -1,0 +1,23 @@
+# Configuration for /etc/init.d/virt-init
+
+# The virtualization platform this system is running on.
+platform="vmware-ovf"
+
+# Provisioning scripts to be skipped - whitespace-separated base names
+# (without numeric prefix) of the scripts in $script_dirs.
+#skip_scripts=""
+
+# Directories where to look for the provisioning scripts. Their order matters;
+# if a script of the same name is in multiple directories, the first one wins.
+#script_dirs="/etc/virt-init.d /usr/share/virt-init/scripts"
+
+#
+# Settings for "vmware-ovf" platform
+#
+
+# Map OVF properties to environment variables - a whitespace-separated list of
+# <property>=<variable>. If a mapping is not specified for a property, it's
+# converted to SCREAMING_CASE and all non-alphanumeric characters replaced with
+# an underscore.
+#vmware_ovf_mapping="
+#	hostname=SET_HOSTNAME"

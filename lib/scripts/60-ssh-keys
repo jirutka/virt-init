@@ -1,0 +1,42 @@
+#!/bin/sh
+# vim: set ts=4 sw=4:
+set -eu
+
+update_ssh_keys() {
+	local user="$1"
+	local keys="$2"
+
+	local homedir="$(getent passwd "$user" | cut -d: -f6)"
+	if [ -z "$homedir" ]; then
+		echo "ERROR: No home directory found for user $user" >&2
+		return 1
+	fi
+
+	local auth_file="${homedir:-/root}/.ssh/authorized_keys"
+	local group="$(id -gn "$user")"
+
+	if ! [ -f "$auth_file" ]; then
+		install -m700 -o "$user" -g "$group" -d "${auth_file%/*}"
+		install -m600 -o "$user" -g "$group" /dev/null "$auth_file"
+	fi
+
+	printf '%s\n' "$keys" | while read -r key; do
+		if ! grep -Fq "$key" "$auth_file"; then
+			echo "Adding SSH key to $auth_file" >&2
+			printf '%s\n' "$key" >> "$auth_file"
+		fi
+	done
+}
+
+if [ "${ROOT_SSH_KEYS:-}" ]; then
+	update_ssh_keys 'root' "$ROOT_SSH_KEYS"
+fi
+
+if [ "${ADMIN_SSH_KEYS:-}" ]; then
+	if ! id "${ADMIN_USER:-}" >/dev/null 2>&1; then
+		ADMIN_USER='root'
+	fi
+	update_ssh_keys "$ADMIN_USER" "$ADMIN_SSH_KEYS"
+fi
+
+exit 0

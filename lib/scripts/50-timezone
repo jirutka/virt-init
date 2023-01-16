@@ -1,0 +1,14 @@
+#!/bin/sh
+# vim: set ts=4 sw=4:
+set -eu
+
+[ "${TIMEZONE:-}" ] || exit 0
+
+timezone=$(readlink /etc/localtime) || true
+timezone=${timezone#*/zoneinfo/}
+
+if [ "$timezone" != "$TIMEZONE" ]; then
+	setup-timezone "$TIMEZONE"
+fi
+
+exit 0

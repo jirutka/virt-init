@@ -1,0 +1,35 @@
+#!/bin/sh
+# vim: set ts=4 sw=4:
+set -eu
+
+[ "${ADMIN_USER:-}" ] || exit 0
+
+: ${ADMIN_GROUP:="wheel"}
+: ${ADMIN_SHELL:="/bin/sh"}
+
+if ! id "$ADMIN_USER" >/dev/null 2>&1; then
+	echo "Creating user $ADMIN_USER" >&2
+
+	if command -v useradd >/dev/null; then
+		useradd --create-home \
+		        --no-user-group \
+		        --shell "$ADMIN_SHELL" \
+		        ${ADMIN_UID:+"-u $ADMIN_UID"} \
+		        "$ADMIN_USER"
+	else
+		adduser -D -G users -s "$ADMIN_SHELL" ${ADMIN_UID:+"-u $ADMIN_UID"} "$ADMIN_USER"
+		passwd -u "$ADMIN_USER" >/dev/null  # unlock account
+	fi
+fi
+
+if ! id -Gn "$ADMIN_USER" 2>/dev/null | grep -Fq $ADMIN_GROUP; then
+	echo "Adding user $ADMIN_USER to group $ADMIN_GROUP" >&2
+
+	if command -v usermod >/dev/null; then
+		usermod --append --groups $ADMIN_GROUP "$ADMIN_USER"
+	else
+		addgroup "$ADMIN_USER" $ADMIN_GROUP
+	fi
+fi
+
+exit 0

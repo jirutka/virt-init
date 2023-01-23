@@ -31,7 +31,7 @@ read_params() {
 _remap_key() {
 	local key="$1"
 
-	local kv; for kv in ${vmware_ovf_mapping:-}; do
+	local kv; for kv in ${vmware_ovf_mapping:-} $DEFAULT_OVF_MAPPING; do
 		if [ "${kv%%=*}" = "$key" ]; then
 			echo "${kv#*=}"
 			return 0

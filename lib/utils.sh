@@ -52,7 +52,6 @@ update_config() {
 
 	[ -z "$content" ] || content=$(
 		cat <<-EOF
-
 			$start_tag by virt-init
 			# Do not modify this block, any modifications will be lost after reboot!
 			$content
@@ -75,7 +74,7 @@ update_config() {
 		fi
 
 	elif [ "$content" ]; then
-		printf '%s\n' "$content" >> "$conf_file"
+		printf '\n%s\n' "$content" >> "$conf_file"
 	fi
 }
 

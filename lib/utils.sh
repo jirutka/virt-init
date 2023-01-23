@@ -45,15 +45,14 @@ try_enable_pipefail() {
 # $2: Content to be inserted into the file; reads from STDIN if not provided.
 update_config() {
 	local conf_file="$1"
-	local content="${2-"$(cat -)"}"  # if $3 is *not set*, read from STDIN
+	local content="${2-"$(cat -)"}"  # if $2 is *not set*, read from STDIN
 
 	local start_tag='# BEGIN generated'
 	local end_tag='# END generated'
 
 	[ -z "$content" ] || content=$(
 		cat <<-EOF
-			$start_tag by virt-init
-			# Do not modify this block, any modifications will be lost after reboot!
+			$start_tag by virt-init (do not modify this block)
 			$content
 			$end_tag
 		EOF

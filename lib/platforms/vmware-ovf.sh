@@ -42,5 +42,5 @@ _remap_key() {
 }
 
 _xml_decode() {
-	printf '%s\n' "$1" | sed "s/&amp;/\&/g; s/&lt;/\</g; s/&gt;/\>/g; s/&quot;/\"/g; s/&apos;/'\"'\"'/g; s/&#10;/\n/g"
+	printf '%s\n' "$1" | sed "s/&amp;/\&/g; s/&lt;/\</g; s/&gt;/\>/g; s/&quot;/\"/g; s/&apos;/'\"'\"'/g; s/&#10;/\n/g; s/\([^\\]\)\\\n/\1\n/g"
 }

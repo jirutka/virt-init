@@ -19,7 +19,7 @@ read_params() {
 
 	vmware-rpctool 'info-get guestinfo.ovfEnv' \
 		| sed -En 's|.*<Property oe:key="([^"]+)".*oe:value="([^"]+)".*/>.*|'"\1=\2|p" \
-		| while read kv; do
+		| while read -r kv; do
 			key=$(_remap_key "${kv%%=*}")
 
 			if ! is_protected_var "$key"; then

@@ -1,6 +1,7 @@
 # Configuration for /etc/init.d/virt-init
 
-# The virtualization platform this system is running on.
+# The virtualization platform (and data source) this system is running on.
+# Supported platforms: vmware-ovf, vmware-guestinfo.
 platform="vmware-ovf"
 
 # Provisioning scripts to be skipped - whitespace-separated base names
@@ -21,3 +22,13 @@ platform="vmware-ovf"
 # an underscore.
 #vmware_ovf_mapping="
 #	hostname=SET_HOSTNAME"
+
+#
+# Settings for "vmware-guestinfo" platform
+#
+
+# Map guestinfo parameters to environment variables - a whitespace-separated
+# list of <parameter>=<variable> (without the 'guestinfo.' prefix). Unlike OVF
+# properties, each parameter/variable must be explicitly mapped. A special
+# keyword "+default" adds the default mapping (e.g. 'admin-user=ADMIN_USER').
+#vmware_guestinfo_mapping="+default"

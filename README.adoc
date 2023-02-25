@@ -19,6 +19,13 @@ There’s one predefined mapping: `hostname` to `SET_HOSTNAME`.
 Some special variable names, such as `PATH`, `PWD` or `RC_*` variables, are protected.
 
 
+=== VMware/guestinfo
+
+This platform/source reads parameters from the GuestInfo variables.
+
+GuestInfo parameters are mapped to the variables for the provisioning scripts explicitly via `vmware_guestinfo_mapping` in the link:etc/conf.d/virt-init[config].
+
+
 == Scripts
 
 === link:{scripts-dir}/50-admin-user[50-admin-user]

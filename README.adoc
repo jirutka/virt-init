@@ -3,7 +3,7 @@
 :gh-name: jirutka/{proj-name}
 :scripts-dir: lib/scripts
 
-This project provides “provisioning” scripts for https://alpinelinux.org[Alpine Linux] virtual machines running on VMware (other platforms will be supported later).
+This project provides “provisioning” scripts for https://alpinelinux.org[Alpine Linux] virtual machines running on VMware or platforms supporting https://cloudinit.readthedocs.io/en/latest/reference/datasources/nocloud.html[cloud-init/nocloud] (more platforms may be supported in the future).
 
 WIP
 
@@ -24,6 +24,15 @@ Some special variable names, such as `PATH`, `PWD` or `RC_*` variables, are prot
 This platform/source reads parameters from the GuestInfo variables.
 
 GuestInfo parameters are mapped to the variables for the provisioning scripts explicitly via `vmware_guestinfo_mapping` in the link:etc/conf.d/virt-init[config].
+
+
+=== Cloud-init/nocloud
+
+This platform reads parameters from files provided on an ISO 9660 (or VFAT) filesystem (typically a virtual CD-ROM) labeled `cidata`, specifically from the `meta-data` file and the `user-data` file in https://cloudinit.readthedocs.io/en/latest/reference/examples.html[cloud-config] format.
+
+By default, `**$ADMIN_USER**` is mapped to the first user in the `users` directive or to the directive `user` (in this order of precedence).
+
+This integration has been tested on the Proxmox platform.
 
 
 == Scripts
@@ -80,6 +89,7 @@ If `**$ADMIN_SSH_KEYS**` is provided, adds them to `authorized_keys` of the user
 * https://wiki.gentoo.org/wiki/OpenRC[OpenRC]
 * `btrfs` utility and/or `resize2fs` from http://e2fsprogs.sourceforge.net[e2fsprogs] (only for grow-fs script)
 * `vmware-rpctool` from open-vm-tools (only for VMware)
+* https://gitlab.com/tomalok/yx[yx] tool (only for cloud-init)
 
 
 == Installation

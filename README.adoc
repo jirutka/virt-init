@@ -49,7 +49,9 @@ If `**$ADMIN_USER**` is not provided, this script is skipped.
 Extends all mounted filesystems to the maximum disk capacity.
 Only ext3, ext4, and btrfs are currently supported.
 
-*Note*: This script does not increase size of underlying partitions, because it’s just silly to use partitions on non-physical disks.
+If the filesystem resides on a partition (GPT or DOS) and it’s the last partition, it will be expanded before resizing the filesystem.
+
+*Note*: It’s completely unnecessary and pointless to use partitions on virtual disks, it just adds more complexity and complications, but some broken platforms and tools (e.g. Veeam Backup) require it.
 
 
 === link:{scripts-dir}/50-hostname[50-hostname]
@@ -88,6 +90,7 @@ If `**$ADMIN_SSH_KEYS**` is provided, adds them to `authorized_keys` of the user
 * POSIX-compatible shell (e.g. ash, bash, dash, zsh)
 * https://wiki.gentoo.org/wiki/OpenRC[OpenRC]
 * `btrfs` utility and/or `resize2fs` from http://e2fsprogs.sourceforge.net[e2fsprogs] (only for grow-fs script)
+* `partx` and `sfdisk` from https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git[util-linux] (only for grow-fs script if you use partitions)
 * `vmware-rpctool` from open-vm-tools (only for VMware)
 * https://gitlab.com/tomalok/yx[yx] tool (only for cloud-init)
 

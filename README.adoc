@@ -35,6 +35,13 @@ By default, `**$ADMIN_USER**` is mapped to the first user in the `users` directi
 This integration has been tested on the Proxmox platform.
 
 
+=== OpenNebula
+
+This platform reads parameters from files on an ISO 9660 (or VFAT) filesystem (a virtual CD-ROM) labeled `CONTEXT`, specifically the `context.sh` shell script.
+
+By default, `**$ADMIN_USER**` is mapped to `USERNAME` and `**$ADMIN_SSH_KEYS**` is mapped to the `SSH_PUBLIC_KEY` context variable.
+
+
 == Scripts
 
 === link:{scripts-dir}/50-admin-user[50-admin-user]
@@ -88,6 +95,7 @@ If `**$ADMIN_SSH_KEYS**` is provided, adds them to `authorized_keys` of the user
 == Requirements
 
 * POSIX-compatible shell (e.g. ash, bash, dash, zsh)
+* core *nix utils (`awk`, `grep`, `sed`...)
 * https://wiki.gentoo.org/wiki/OpenRC[OpenRC]
 * `btrfs` utility and/or `resize2fs` from http://e2fsprogs.sourceforge.net[e2fsprogs] (only for grow-fs script)
 * `partx` and `sfdisk` from https://git.kernel.org/pub/scm/utils/util-linux/util-linux.git[util-linux] (only for grow-fs script if you use partitions)

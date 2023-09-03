@@ -45,3 +45,15 @@ platform="vmware-ovf"
 # 'ssh_authorized_keys/*'). Unlike OVF properties, each parameter/variable must
 # be explicitly mapped. A special keyword "+default" adds the default mappings.
 #cloudinit_userdata_mapping="+default"
+
+#
+# Settings for "opennebula" platform
+#
+
+# Map context variables to environment variables - a whitespace-separated list
+# of <ctx-var>=<target-var>. If no mapping is specified for a context variable,
+# it's converted to SCREAMING_CASE and all non-alphanumeric characters are
+# replaced with an underscore.
+#opennebula_context_mapping="
+#	SSH_PUBLIC_KEY=ADMIN_SSH_KEYS
+#	USERNAME=ADMIN_USER"

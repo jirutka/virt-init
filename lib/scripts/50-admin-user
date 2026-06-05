@@ -13,6 +13,7 @@ if ! id "$ADMIN_USER" >/dev/null 2>&1; then
 	if command -v useradd >/dev/null; then
 		useradd --create-home \
 		        --no-user-group \
+		        --password '*' \
 		        --shell "$ADMIN_SHELL" \
 		        ${ADMIN_UID:+"-u $ADMIN_UID"} \
 		        "$ADMIN_USER"

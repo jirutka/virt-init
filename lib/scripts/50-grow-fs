@@ -44,7 +44,7 @@ part_resize() {
 part_resize_if_needed() {
 	local part_path="$1"
 
-	local part_name="${dev_path##*/}"
+	local part_name="${part_path##*/}"
 	local disk_path="$(readlink -f /sys/class/block/$part_name/..)"
 	disk_path="/dev/${disk_path##*/}"
 

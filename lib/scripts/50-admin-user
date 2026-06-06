@@ -19,7 +19,7 @@ if ! id "$ADMIN_USER" >/dev/null 2>&1; then
 		        "$ADMIN_USER"
 	else
 		adduser -D -G users -s "$ADMIN_SHELL" ${ADMIN_UID:+"-u $ADMIN_UID"} "$ADMIN_USER"
-		passwd -u "$ADMIN_USER" >/dev/null  # unlock account
+		echo "$user:*" | chpasswd -e  # unlock account
 	fi
 fi
 
